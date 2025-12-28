@@ -3,13 +3,13 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 -- Inisialisasi Window
 local Window = Rayfield:CreateWindow({
-    Name = "ABIMS GANS V14.0 | SUPREME ARCHITECT",
-    LoadingTitle = "🚀 INITIALIZING ABIMS GANS PROTOCOL",
+    Name = "ABIMS GANTENG V14.0 | SUPREME ARCHITECT",
+    LoadingTitle = "🚀 INITIALIZING ABIMS GANTENG PROTOCOL",
     LoadingSubtitle = "V14.0 Absolute Security Active",
     ConfigurationSaving = {
         Enabled = false,
         FolderName = nil,
-        FileName = "AbimsGansHub"
+        FileName = "AbimsGantengHub"
     },
     Discord = {
         Enabled = false,
@@ -76,8 +76,7 @@ local secrets = {
     {"Shadow Worm", 358.2, Vector3.new(8, -7.85, 7)},
     {"Shadow Megalodon", 359, Vector3.new(2, -7.85, 2)},
     {"Shadow Crocodile", 358.7, Vector3.new(4, -7.85, 6)},
-    {"Twinhead Maja", 359, Vector3.new(1, -7.85, -5)},
-    {"Devil Naga Hitam", 358.2, Vector3.new(8, -7.85, -4)},
+    {"Twinhead Maja", 360, Vector3.new(1, -7.85, -5)},
     {"Pink Naga", 359.9, Vector3.new(-8, -7.85, -5)},
     {"Ancient Relic Crocodile", 359.9, Vector3.new(5, -7.85, -6)},
     {"Ancient Whale", 329.7, Vector3.new(-8, -7.85, -6)},
@@ -103,12 +102,11 @@ local secrets = {
     {"Kelabang", 418.9, Vector3.new(3, -7.85, 1)},
     {"Zombie Shark", 179.1, Vector3.new(2, -7.85, -1)},
     {"Demonfire Nerevan", 358.5, Vector3.new(-5, -7.85, -2)},
-    {"Red Mist Trident", 329.4, Vector3.new(4, -7.85, -4)}
 }
 
 for _, v in pairs(secrets) do
     Secret_Abyss:CreateButton({
-        Name = "💉 Inject: " .. v[1],
+        Name = "🤑 Inject: " .. v[1],
         Callback = function() SafeInject(v[1], v[2], v[3], "Secret") end
     })
 end
@@ -155,6 +153,6 @@ end
 -- Notifikasi Akhir
 Rayfield:Notify({
     Duration = 5,
-    Title = "ABIMS GANS V14 READY",
+    Title = "ABIMS GANTENG V14 GASKUY",
     Content = "Seluruh database inject telah dimuat.",
 })
