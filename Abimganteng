@@ -2,8 +2,8 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "ABIMS FINAL | ASSETS INJECTOR",
-    LoadingTitle = "🚀 SYNCING ASSETS DATA",
+    Name = "ABIMS FINAL | ULTRA ASSETS",
+    LoadingTitle = "🚀 SYNCING ALL FISH DATA",
     LoadingSubtitle = "Remote: 23462347G8235 Active",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false,
@@ -11,92 +11,154 @@ local Window = Rayfield:CreateWindow({
 
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local MainRemote = ReplicatedStorage.FishingSystem:WaitForChild("23462347G8235")
+local FS = ReplicatedStorage:WaitForChild("FishingSystem")
+local MainRemote = FS:WaitForChild("23462347G8235")
 
 _G.Cooldown = false
+_G.AutoCatch = false
+_G.CaughtCount = 0
 
+-- FUNGSI INJECT IKAN
 local function InjectAsset(name, weight, rarity)
     if _G.Cooldown then return end
+    
+    local boosterWasOn = _G.AutoCatch
+    _G.AutoCatch = false 
     _G.Cooldown = true
 
-    -- Pre-hook Simulation (Agar masuk tas)
-    local FS = ReplicatedStorage.FishingSystem
     if FS:FindFirstChild("CleanupCast") then FS.CleanupCast:FireServer() end
-    task.wait(2.5) 
-    if FS:FindFirstChild("FishingCatchSuccess") then FS.FishingCatchSuccess:FireServer() end
     task.wait(0.5)
+    
+    if FS:FindFirstChild("FishingCatchSuccess") then 
+        FS.FishingCatchSuccess:FireServer() 
+    end
+    
+    task.wait(0.2)
 
-    -- Injeksi Nama sesuai yang tertera di Dex Explorer
-    local success, err = pcall(function()
+    pcall(function()
         MainRemote:FireServer({
             ["name"] = name,
             ["weight"] = weight,
             ["rarity"] = rarity,
-            ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, -10, 0),
+            ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, -5, 0),
             ["isSpecial"] = true
         })
     end)
 
-    if success then
-        Rayfield:Notify({Title = "INJECTED", Content = name .. " telah dikirim ke Tas!", Duration = 3})
-    else
-        warn("Error: " .. tostring(err))
-    end
-
-    task.wait(6.5)
+    Rayfield:Notify({Title = "SUCCESS", Content = name .. " Masuk ke Tas!", Duration = 3})
+    
+    task.wait(2)
     _G.Cooldown = false
+    
+    if boosterWasOn then
+        _G.AutoCatch = true
+        task.spawn(function()
+            while _G.AutoCatch do
+                pcall(function()
+                    ReplicatedStorage.FishingCatchSuccess:FireServer()
+                    MainRemote:FireServer({{
+                        ["name"] = "Blue Fish", 
+                        ["rarity"] = "Common",
+                        ["weight"] = math.random(5, 15),
+                        ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position
+                    }})
+                    _G.CaughtCount = _G.CaughtCount + 1
+                end)
+                task.wait(0.01)
+            end
+        end)
+    end
 end
 
--- TAB 1: SECRET & DEVIL (DARI DEX ASSETS)
-local TabSecret = Window:CreateTab("🔥 Secret & Devil", nil)
-TabSecret:CreateSection("Target High Value")
+-- TAB 1: CAUGHT BOOSTER
+local TabStats = Window:CreateTab("📈 Statistics", nil)
+TabStats:CreateSection("⚡ Leaderboard Auto Catch")
+local LabelCount = TabStats:CreateLabel("Caught Session: 0")
+
+task.spawn(function()
+    while true do
+        LabelCount:Set("Caught Session: " .. _G.CaughtCount)
+        task.wait(0.1)
+    end
+end)
+
+TabStats:CreateToggle({
+    Name = "Start Caught Booster",
+    CurrentValue = false,
+    Flag = "ToggleBooster",
+    Callback = function(Value)
+        _G.AutoCatch = Value
+        if Value then
+            task.spawn(function()
+                while _G.AutoCatch do
+                    pcall(function()
+                        if ReplicatedStorage:FindFirstChild("FishingCatchSuccess") then
+                            ReplicatedStorage.FishingCatchSuccess:FireServer()
+                        end
+                        MainRemote:FireServer({{
+                            ["name"] = "Blue Fish", 
+                            ["rarity"] = "Common",
+                            ["weight"] = math.random(5, 15),
+                            ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position
+                        }})
+                        _G.CaughtCount = _G.CaughtCount + 1
+                    end)
+                    task.wait(0.01)
+                end
+            end)
+        end
+    end,
+})
+
+-- TAB 2: SEMUA IKAN (SEKARANG SEMUA SECRET)
+local TabSecret = Window:CreateTab("🔥 All Secret", nil)
+TabSecret:CreateSection("Target High Value (Semua Rarity: Secret)")
 
 local secretList = {
+    -- Gabungan SynceHub & Assets Original Secret
+    {"El Maja", 998, "Secret"},
+    {"El Maja Pink", 998, "Secret"},
+    {"Kraken", 998, "Secret"},
+    {"Mega Hunt", 998, "Secret"},
+    {"Lochness Monster", 998, "Secret"},
+    {"purple Kraken", 998, "Secret"},
+    {"Wraithfin Abyssal", 998, "Secret"},
+    {"Sotong", 998, "Secret"},
+    {"KingJally Strong", 998, "Secret"},
+    {"King Crab", 998, "Secret"},
+    {"Shark Bone", 998, "Secret"},
+    {"Naga", 998, "Secret"},
+    {"Worm Fish", 998, "Secret"},
+    {"Ancient Whale", 998, "Secret"},
+    {"Jungle Crocodile", 998, "Secret"},
     {"Devil Kraken", 360, "Secret"},
     {"Devil Naga Hitam", 360, "Secret"},
     {"Devil Bone Whale", 350, "Secret"},
-    {"Devil Shark Bone", 340, "Secret"},
     {"Shadow Megalodon", 360, "Secret"},
     {"Shadow Crocodile", 330, "Secret"},
-    {"Ancient Whale", 360, "Secret"},
     {"Ancient Relic Crocodile", 350, "Secret"},
-    {"purple Kraken", 360, "Secret"},
-    {"Wraithfin Abyssal", 340, "Secret"}
+    
+    -- Ikan yang sebelumnya Mitos (Sekarang diubah jadi Secret)
+    {"Devilish Gran Maja", 998, "Secret"},
+    {"Devilish Lochness", 998, "Secret"},
+    {"Sapu Sapu Goib", 998, "Secret"},
+    {"ArapaimaFish", 220, "Secret"},
+    {"Morning Star", 200, "Secret"},
+    {"Genetik Fish", 170, "Secret"}
 }
 
 for _, fish in pairs(secretList) do
     TabSecret:CreateButton({
-        Name = "Inject " .. fish[1],
+        Name = fish[1],
         Callback = function() InjectAsset(fish[1], fish[2], fish[3]) end
     })
 end
 
--- TAB 2: MITOS & UNIQUE (DARI DEX ASSETS)
-local TabMitos = Window:CreateTab("🌟 Mitos & Unique", nil)
-TabMitos:CreateSection("Target Rare")
-
-local mitosList = {
-    {"ArapaimaFish", 220, "Mitos"},
-    {"Devilish Gran Maja", 250, "Mitos"},
-    {"Devilish Lochness", 240, "Mitos"},
-    {"Lochiness Monster", 260, "Mitos"},
-    {"Morning Star", 200, "Mitos"},
-    {"Sapu Sapu Goib", 180, "Mitos"},
-    {"Genetik Fish", 170, "Mitos"}
-}
-
-for _, fish in pairs(mitosList) do
-    TabMitos:CreateButton({
-        Name = "Inject " .. fish[1],
-        Callback = function() InjectAsset(fish[1], fish[2], fish[3]) end
-    })
-end
-
--- SETTINGS
+-- TAB 3: SETTINGS
 local TabSet = Window:CreateTab("Settings", nil)
 TabSet:CreateButton({
     Name = "RESET COOLDOWN (Jika macet)",
     Callback = function() _G.Cooldown = false end
 })
 
-Rayfield:Notify({Title = "Ready", Content = "Pegang Rod lalu pilih ikan!", Duration = 5})
+Rayfield:Notify({Title = "Update Success", Content = "Semua ikan Mitos telah dikonversi menjadi Secret!", Duration = 5})
