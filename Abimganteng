@@ -1,157 +1,105 @@
 -- Library Rayfield
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Inisialisasi Window
 local Window = Rayfield:CreateWindow({
-    Name = "ABIMS GANTENG V14.0 | SUPREME ARCHITECT",
-    LoadingTitle = "🚀 INITIALIZING ABIMS GANTENG PROTOCOL",
-    LoadingSubtitle = "V14.0 Absolute Security Active",
-    ConfigurationSaving = {
-        Enabled = false,
-        FolderName = nil,
-        FileName = "AbimsGantengHub"
-    },
-    Discord = {
-        Enabled = false,
-        Invite = "",
-        RememberJoins = true
-    },
-    KeySystem = false, -- Tanpa sistem Key
+    Name = "ABIMS V23 | BYPASS EDITION", -- Nama GUI Bersih
+    LoadingTitle = "🚀 INITIALIZING SYSTEM",
+    LoadingSubtitle = "Preparing Assets Data...",
+    ConfigurationSaving = { Enabled = false },
+    KeySystem = false,
 })
 
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-_G.MassActive = false
-_G.ManualCooldown = false
+local FS = ReplicatedStorage:WaitForChild("FishingSystem")
 
--- FUNGSI INJECT LENGKAP (DENGAN ANTI-SPAM DELAY)
-local function SafeInject(name, weight, vector, rarity)
-    if _G.ManualCooldown then 
-        Rayfield:Notify({Title = "Sistem", Content = "Tunggu cooldown selesai (5-6 detik)!", Duration = 2})
-        return 
-    end
-    
-    _G.ManualCooldown = true
-    local FishingSystem = ReplicatedStorage:WaitForChild("FishingSystem", 5)
-    local Remote = FishingSystem:WaitForChild("893478GDBSDUAYGDTAF", 5)
-    
-    -- Simulasi durasi memancing agar aman
-    task.wait(math.random(1.2, 2.0)) 
-    
-    if FishingSystem:FindFirstChild("CleanupCast") then
-        FishingSystem.CleanupCast:FireServer()
-    end
-    
+-- KEY DISIMPAN SECARA INTERNAL (TIDAK TAMPIL DI GUI)
+local _PRIVATE_KEY = "23462347G8235"
+local MainRemote = FS:WaitForChild(_PRIVATE_KEY)
+
+_G.Cooldown = false
+
+local function InjectAsset(name, weight, rarity)
+    if _G.Cooldown then return end
+    _G.Cooldown = true
+
+    -- Pre-hook Simulation
+    if FS:FindFirstChild("CleanupCast") then FS.CleanupCast:FireServer() end
+    task.wait(2.5) 
+    if FS:FindFirstChild("FishingCatchSuccess") then FS.FishingCatchSuccess:FireServer() end
     task.wait(0.5)
-    
-    if FishingSystem:FindFirstChild("FishingCatchSuccess") then
-        FishingSystem.FishingCatchSuccess:FireServer()
+
+    -- Injeksi Nama
+    local success, err = pcall(function()
+        MainRemote:FireServer({
+            ["name"] = name,
+            ["weight"] = weight,
+            ["rarity"] = rarity,
+            ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, -10, 0),
+            ["isSpecial"] = true
+        })
+    end)
+
+    if success then
+        Rayfield:Notify({Title = "BERHASIL", Content = name .. " telah masuk ke Tas!", Duration = 3})
+    else
+        warn("Error: " .. tostring(err))
     end
 
-    task.wait(0.6)
-
-    local hookPos = LocalPlayer.Character.HumanoidRootPart.Position + vector
-    Remote:FireServer({
-        hookPosition = hookPos,
-        rarity = rarity,
-        name = name,
-        weight = weight,
-    })
-
-    Rayfield:Notify({Title = "Success", Content = "Entitas " .. name .. " disinkronkan.", Duration = 2})
-    
-    task.wait(6.5) 
-    _G.ManualCooldown = false
+    task.wait(6.5)
+    _G.Cooldown = false
 end
 
--- TABS CATEGORY
-local Secret_Abyss = Window:CreateTab("🌌 Secret Abyss", 4483362458)
-local Elite_Tier = Window:CreateTab("👹 Elite Tier", 4483362458)
-local Common_Tier = Window:CreateTab("🐟 Common Tier", 4483362458)
-local Auto_Mass = Window:CreateTab("⚡ Auto Mass", 4483362458)
+-- TAB 1: SECRET & DEVIL
+local TabSecret = Window:CreateTab("🔥 Secret & Devil", nil)
+TabSecret:CreateSection("Target High Value")
 
--- [TAB SECRET ABYSS - LENGKAP]
-Secret_Abyss:CreateSection("Target Overwrite: Secret")
-local secrets = {
-    {"Shadow Worm", 358.2, Vector3.new(8, -7.85, 7)},
-    {"Shadow Megalodon", 359, Vector3.new(2, -7.85, 2)},
-    {"Shadow Crocodile", 358.7, Vector3.new(4, -7.85, 6)},
-    {"Twinhead Maja", 360, Vector3.new(1, -7.85, -5)},
-    {"Pink Naga", 359.9, Vector3.new(-8, -7.85, -5)},
-    {"Ancient Relic Crocodile", 359.9, Vector3.new(5, -7.85, -6)},
-    {"Ancient Whale", 329.7, Vector3.new(-8, -7.85, -6)},
-    {"Kraken", 238.2, Vector3.new(5, -7.85, -3)},
-    {"Sotong", 239.6, Vector3.new(-3, -7.85, 4)},
-    {"Sapu Sapu Goib", 119.3, Vector3.new(-5, -7.85, 0)},
-    {"Shark Bone", 178.7, Vector3.new(-1, -7.85, 6)},
-    {"King Crab", 178.9, Vector3.new(-5, -7.85, -8)},
-    {"Naga", 239.4, Vector3.new(8, -7.85, -3)},
-    {"El Maja Pink", 359.3, Vector3.new(4, -7.85, -5)},
-    {"El Maja White", 358.1, Vector3.new(0, -7.85, -4)},
-    {"Mega Hunt", 298.2, Vector3.new(2, -7.85, 1)},
-    {"Megalodon", 299.7, Vector3.new(4, -7.85, -3)},
-    {"Devilish Gran Maja", 419.1, Vector3.new(0, -7.85, -2)},
-    {"Jungle Crocodile", 178.8, Vector3.new(-4, -7.85, -1)},
-    {"KingJally Strong", 298.4, Vector3.new(-3, -7.85, 5)},
-    {"Lochness Monster", 418.9, Vector3.new(-7, -7.85, -1)},
-    {"Worm Fish", 178.5, Vector3.new(-2, -7.85, 3)},
-    {"Ghost Worm Fish", 149.8, Vector3.new(4, -7.85, -5)},
-    {"Hybodus Shark", 418.5, Vector3.new(4, -7.85, 4)},
-    {"Devilish Lochness", 359, Vector3.new(2, -7.85, -5)},
-    {"Kelabang", 418.9, Vector3.new(3, -7.85, 1)},
-    {"Zombie Shark", 179.1, Vector3.new(2, -7.85, -1)},
-    {"Demonfire Nerevan", 358.5, Vector3.new(-5, -7.85, -2)},
+local secretList = {
+    {"Devil Kraken", 360, "Secret"},
+    {"Devil Naga Hitam", 360, "Secret"},
+    {"Devil Bone Whale", 350, "Secret"},
+    {"Devil Shark Bone", 340, "Secret"},
+    {"Shadow Megalodon", 360, "Secret"},
+    {"Shadow Crocodile", 330, "Secret"},
+    {"Ancient Whale", 360, "Secret"},
+    {"Ancient Relic Crocodile", 350, "Secret"},
+    {"purple Kraken", 360, "Secret"},
+    {"Wraithfin Abyssal", 340, "Secret"}
 }
 
-for _, v in pairs(secrets) do
-    Secret_Abyss:CreateButton({
-        Name = "🤑 Inject: " .. v[1],
-        Callback = function() SafeInject(v[1], v[2], v[3], "Secret") end
+for _, fish in pairs(secretList) do
+    TabSecret:CreateButton({
+        Name = "Dapatkan " .. fish[1],
+        Callback = function() InjectAsset(fish[1], fish[2], fish[3]) end
     })
 end
 
--- [TAB ELITE TIER - LENGKAP]
-Elite_Tier:CreateSection("Target Overwrite: Mitos & Legendary")
-local elites = {
-    {"Devil Shark Bone", 149.3, Vector3.new(-2, -7.85, 4), "Mitos"},
-    {"Devil Bone Whale", 149.1, Vector3.new(1, -7.85, -5), "Mitos"},
-    {"Devil Kraken", 148.5, Vector3.new(-8, -7.85, 4), "Mitos"},
-    {"Monster Shark", 148.1, Vector3.new(4, -7.85, 6), "Mitos"},
-    {"Lochness", 88.8, Vector3.new(-4, -7.85, -6), "Mitos"},
-    {"Plasma Shark", 58.5, Vector3.new(3, -7.85, 6), "Legendary"},
-    {"Crimsom Ray", 58.8, Vector3.new(6, -7.85, 8), "Legendary"}
+-- TAB 2: MITOS & UNIQUE
+local TabMitos = Window:CreateTab("🌟 Mitos & Unique", nil)
+TabMitos:CreateSection("Target Rare")
+
+local mitosList = {
+    {"ArapaimaFish", 220, "Mitos"},
+    {"Devilish Gran Maja", 250, "Mitos"},
+    {"Devilish Lochness", 240, "Mitos"},
+    {"Lochiness Monster", 260, "Mitos"},
+    {"Morning Star", 200, "Mitos"},
+    {"Sapu Sapu Goib", 180, "Mitos"},
+    {"Genetik Fish", 170, "Mitos"}
 }
 
-for _, v in pairs(elites) do
-    Elite_Tier:CreateButton({
-        Name = "🔥 Inject: " .. v[1],
-        Callback = function() SafeInject(v[1], v[2], v[3], v[4]) end
+for _, fish in pairs(mitosList) do
+    TabMitos:CreateButton({
+        Name = "Dapatkan " .. fish[1],
+        Callback = function() InjectAsset(fish[1], fish[2], fish[3]) end
     })
 end
 
--- [TAB COMMON TIER - LENGKAP]
-Common_Tier:CreateSection("Target Overwrite: Common")
-local commons = {
-    {"Mujaer", 5.9, Vector3.new(0, -7.85, -8)},
-    {"Nemo", 8, Vector3.new(-7, -7.85, -3)},
-    {"Genetik Fish", 8, Vector3.new(2, -7.85, -1)},
-    {"Goliath Tiger", 11.3, Vector3.new(7, -7.85, -6)},
-    {"Ikan Lava", 9.4, Vector3.new(-4, -7.85, -6)},
-    {"ikan monyong yg marah", 8.7, Vector3.new(-4, -7.85, -3)},
-    {"Ikan Layang merah", 7.9, Vector3.new(5, -7.85, 8)},
-    {"Arwana bakar", 8.3, Vector3.new(1, -7.85, 4)}
-}
-
-for _, v in pairs(commons) do
-    Common_Tier:CreateButton({
-        Name = "🐟 Inject: " .. v[1],
-        Callback = function() SafeInject(v[1], v[2], v[3], "Common") end
-    })
-end
-
--- Notifikasi Akhir
-Rayfield:Notify({
-    Duration = 5,
-    Title = "ABIMS GANTENG V14 GASKUY",
-    Content = "Seluruh database inject telah dimuat.",
+-- SETTINGS
+local TabSet = Window:CreateTab("Settings", nil)
+TabSet:CreateButton({
+    Name = "RESET COOLDOWN",
+    Callback = function() _G.Cooldown = false end
 })
+
+Rayfield:Notify({Title = "System Ready", Content = "Silahkan pilih target anda!", Duration = 5})
