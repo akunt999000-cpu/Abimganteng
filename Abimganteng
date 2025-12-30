@@ -2,20 +2,16 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "ABIMS V23 | BYPASS EDITION", -- Nama GUI Bersih
-    LoadingTitle = "🚀 INITIALIZING SYSTEM",
-    LoadingSubtitle = "Preparing Assets Data...",
+    Name = "ABIMS FINAL | ASSETS INJECTOR",
+    LoadingTitle = "🚀 SYNCING ASSETS DATA",
+    LoadingSubtitle = "Remote: 23462347G8235 Active",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false,
 })
 
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local FS = ReplicatedStorage:WaitForChild("FishingSystem")
-
--- KEY DISIMPAN SECARA INTERNAL (TIDAK TAMPIL DI GUI)
-local _PRIVATE_KEY = "23462347G8235"
-local MainRemote = FS:WaitForChild(_PRIVATE_KEY)
+local MainRemote = ReplicatedStorage.FishingSystem:WaitForChild("23462347G8235")
 
 _G.Cooldown = false
 
@@ -23,13 +19,14 @@ local function InjectAsset(name, weight, rarity)
     if _G.Cooldown then return end
     _G.Cooldown = true
 
-    -- Pre-hook Simulation
+    -- Pre-hook Simulation (Agar masuk tas)
+    local FS = ReplicatedStorage.FishingSystem
     if FS:FindFirstChild("CleanupCast") then FS.CleanupCast:FireServer() end
     task.wait(2.5) 
     if FS:FindFirstChild("FishingCatchSuccess") then FS.FishingCatchSuccess:FireServer() end
     task.wait(0.5)
 
-    -- Injeksi Nama
+    -- Injeksi Nama sesuai yang tertera di Dex Explorer
     local success, err = pcall(function()
         MainRemote:FireServer({
             ["name"] = name,
@@ -41,7 +38,7 @@ local function InjectAsset(name, weight, rarity)
     end)
 
     if success then
-        Rayfield:Notify({Title = "BERHASIL", Content = name .. " telah masuk ke Tas!", Duration = 3})
+        Rayfield:Notify({Title = "INJECTED", Content = name .. " telah dikirim ke Tas!", Duration = 3})
     else
         warn("Error: " .. tostring(err))
     end
@@ -50,7 +47,7 @@ local function InjectAsset(name, weight, rarity)
     _G.Cooldown = false
 end
 
--- TAB 1: SECRET & DEVIL
+-- TAB 1: SECRET & DEVIL (DARI DEX ASSETS)
 local TabSecret = Window:CreateTab("🔥 Secret & Devil", nil)
 TabSecret:CreateSection("Target High Value")
 
@@ -69,12 +66,12 @@ local secretList = {
 
 for _, fish in pairs(secretList) do
     TabSecret:CreateButton({
-        Name = "Dapatkan " .. fish[1],
+        Name = "Inject " .. fish[1],
         Callback = function() InjectAsset(fish[1], fish[2], fish[3]) end
     })
 end
 
--- TAB 2: MITOS & UNIQUE
+-- TAB 2: MITOS & UNIQUE (DARI DEX ASSETS)
 local TabMitos = Window:CreateTab("🌟 Mitos & Unique", nil)
 TabMitos:CreateSection("Target Rare")
 
@@ -90,7 +87,7 @@ local mitosList = {
 
 for _, fish in pairs(mitosList) do
     TabMitos:CreateButton({
-        Name = "Dapatkan " .. fish[1],
+        Name = "Inject " .. fish[1],
         Callback = function() InjectAsset(fish[1], fish[2], fish[3]) end
     })
 end
@@ -98,8 +95,8 @@ end
 -- SETTINGS
 local TabSet = Window:CreateTab("Settings", nil)
 TabSet:CreateButton({
-    Name = "RESET COOLDOWN",
+    Name = "RESET COOLDOWN (Jika macet)",
     Callback = function() _G.Cooldown = false end
 })
 
-Rayfield:Notify({Title = "System Ready", Content = "Silahkan pilih target anda!", Duration = 5})
+Rayfield:Notify({Title = "Ready", Content = "Pegang Rod lalu pilih ikan!", Duration = 5})
