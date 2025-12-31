@@ -1,0 +1,205 @@
+-- Library Rayfield
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "ABIMS SANGE | ULTRA ASSETS",
+    LoadingTitle = "🚀 ALL FISH DATA",
+    LoadingSubtitle = "Remote: Pemancing Active",
+    ConfigurationSaving = { Enabled = false },
+    KeySystem = false,
+})
+
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local FS = ReplicatedStorage:WaitForChild("FishingSystem")
+local MainRemote = FS:WaitForChild("23462347G8235")
+
+_G.Cooldown = false
+_G.AutoCatch = false
+_G.AutoGB = false 
+_G.CaughtCount = 0
+
+-- FUNGSI INJECT IKAN (Original logic preserved)
+local function InjectAsset(name, weight, rarity)
+    if _G.Cooldown then return end
+    
+    local boosterWasOn = _G.AutoCatch
+    _G.AutoCatch = false 
+    _G.Cooldown = true
+
+    if FS:FindFirstChild("CleanupCast") then FS.CleanupCast:FireServer() end
+    task.wait(0.05)
+    
+    if FS:FindFirstChild("FishingCatchSuccess") then 
+        FS.FishingCatchSuccess:FireServer() 
+    end
+    
+    task.wait(0.01)
+
+    pcall(function()
+        MainRemote:FireServer({
+            ["name"] = name,
+            ["weight"] = weight,
+            ["rarity"] = rarity,
+            ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, -5, 0),
+            ["isSpecial"] = true
+        })
+    end)
+
+    Rayfield:Notify({Title = "SUCCESS", Content = name .. " Masuk!", Duration = 0.5})
+    
+    task.wait(0.2)
+    _G.Cooldown = false
+    
+    if boosterWasOn then
+        _G.AutoCatch = true
+        task.spawn(function()
+            while _G.AutoCatch do
+                pcall(function()
+                    ReplicatedStorage.FishingCatchSuccess:FireServer()
+                    MainRemote:FireServer({{
+                        ["name"] = "Blue Fish", 
+                        ["rarity"] = "Common",
+                        ["weight"] = math.random(5, 15),
+                        ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position
+                    }})
+                    _G.CaughtCount = _G.CaughtCount + 1
+                end)
+                task.wait(0.001)
+            end
+        end)
+    end
+end
+
+-- DAFTAR IKAN LENGKAP
+local secretList = {
+    {"El Maja", 998, "Secret"},
+    {"El Maja Pink", 998, "Secret"},
+    {"Kraken", 998, "Secret"},
+    {"Mega Hunt", 998, "Secret"},
+    {"Lochness Monster", 998, "Secret"},
+    {"purple Kraken", 998, "Secret"},
+    {"Wraithfin Abyssal", 998, "Secret"},
+    {"Sotong", 998, "Secret"},
+    {"KingJally Strong", 998, "Secret"},
+    {"King Crab", 998, "Secret"},
+    {"Shark Bone", 998, "Secret"},
+    {"Naga", 998, "Secret"},
+    {"Worm Fish", 998, "Secret"},
+    {"Ancient Whale", 998, "Secret"},
+    {"Jungle Crocodile", 998, "Secret"},
+    {"Devil Kraken", 360, "Secret"},
+    {"Devil Naga Hitam", 360, "Secret"},
+    {"Devil Bone Whale", 350, "Secret"},
+    {"Shadow Megalodon", 360, "Secret"},
+    {"Shadow Crocodile", 330, "Secret"},
+    {"Ancient Relic Crocodile", 350, "Secret"},
+    {"Devilish Gran Maja", 998, "Secret"},
+    {"Devilish Lochness", 998, "Secret"},
+    {"Sapu Sapu Goib", 998, "Secret"},
+    {"ArapaimaFish", 220, "Secret"},
+    {"Morning Star", 200, "Secret"},
+    {"Genetik Fish", 170, "Secret"}
+}
+
+-- TAB 1: STATISTICS & BOOSTER
+local TabStats = Window:CreateTab("📈 Statistics", nil)
+TabStats:CreateSection("⚡ Leaderboard Auto Catch")
+local LabelCount = TabStats:CreateLabel("Caught Session: 0")
+
+task.spawn(function()
+    while true do
+        LabelCount:Set("Caught Session: " .. _G.CaughtCount)
+        task.wait(0.1)
+    end
+end)
+
+TabStats:CreateToggle({
+    Name = "Start Caught Booster",
+    CurrentValue = false,
+    Flag = "ToggleBooster",
+    Callback = function(Value)
+        _G.AutoCatch = Value
+        if Value then
+            task.spawn(function()
+                while _G.AutoCatch do
+                    pcall(function()
+                        if ReplicatedStorage:FindFirstChild("FishingCatchSuccess") then
+                            ReplicatedStorage.FishingCatchSuccess:FireServer()
+                        end
+                        MainRemote:FireServer({{
+                            ["name"] = "Blue Fish", 
+                            ["rarity"] = "Common",
+                            ["weight"] = math.random(5, 15),
+                            ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position
+                        }})
+                        _G.CaughtCount = _G.CaughtCount + 1
+                    end)
+                    task.wait(0.0001) -- Dipercepat maksimal
+                end
+            end)
+        end
+    end,
+})
+
+-- TAB 2: AUTO GB (BRUTAL INSTANT MODE)
+local TabGB = Window:CreateTab("🌀 Auto GB", nil)
+TabGB:CreateSection("⚡ ULTRA FAST INSTANT")
+
+TabGB:CreateToggle({
+    Name = "Start Instant GB All Secret",
+    CurrentValue = false,
+    Flag = "ToggleGB",
+    Callback = function(Value)
+        _G.AutoGB = Value
+        if Value then
+            task.spawn(function()
+                while _G.AutoGB do
+                    for _, v in pairs(secretList) do
+                        if not _G.AutoGB then break end
+                        -- Eksekusi instan tanpa menunggu cooldown fungsi InjectAsset
+                        task.spawn(function()
+                            pcall(function()
+                                ReplicatedStorage.FishingCatchSuccess:FireServer()
+                                MainRemote:FireServer({
+                                    ["name"] = v[1],
+                                    ["weight"] = v[2],
+                                    ["rarity"] = v[3],
+                                    ["hookPosition"] = LocalPlayer.Character.HumanoidRootPart.Position,
+                                    ["isSpecial"] = true
+                                })
+                                _G.CaughtCount = _G.CaughtCount + 1
+                            end)
+                        end)
+                    end
+                    task.wait(0.01) -- Delay antar cycle agar tidak crash
+                end
+            end)
+        end
+    end,
+})
+
+-- TAB 3: SEMUA IKAN (MANUAL)
+local TabSecret = Window:CreateTab("🔥 All Secret", nil)
+TabSecret:CreateSection("Target High Value (Semua Rarity: Secret)")
+
+for _, fish in pairs(secretList) do
+    TabSecret:CreateButton({
+        Name = fish[1],
+        Callback = function() InjectAsset(fish[1], fish[2], fish[3]) end
+    })
+end
+
+-- TAB 4: SETTINGS
+local TabSet = Window:CreateTab("Settings", nil)
+TabSet:CreateButton({
+    Name = "RESET COOLDOWN",
+    Callback = function() _G.Cooldown = false end
+})
+
+-- ANTI-DETECTION
+if syn and syn.protect_gui then
+    syn.protect_gui(game:GetService("CoreGui").Rayfield)
+end
+
+Rayfield:Notify({Title = "READY", Content = "GB Secret & Booster sekarang berjalan Instan!", Duration = 5})
